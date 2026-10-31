@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TradeMaster TMA | ژورنال و دیسیپلین تریدر</title>
+  
+  <!-- کتابخانه رسمی تلگرام وب‌اپ -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- استایل‌ها و ابزارهای رابط کاربری -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- افزودن ماژول کندل‌استیک مالی چارت جی‌اس -->
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  
+  <!-- فونت وزیرمتن و اینتر -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['Inter', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Vazirmatn', 'Inter', sans-serif;
+      background-color: var(--tg-theme-bg-color, #0b0f19);
+      color: var(--tg-theme-text-color, #f1f5f9);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .tg-safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .tg-safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    .tap-effect:active {
+      transform: scale(0.97);
+      transition: transform 0.08s ease;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col pb-24 select-none">
+
+  <!-- نوار بالای اپلیکیشن هماهنگ با تم تلگرام -->
+  <header class="sticky top-0 z-40 bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-2.5 flex items-center justify-between tg-safe-top">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-md shadow-emerald-500/20 text-slate-950 font-bold">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-sm font-extrabold text-white">TradeMaster</h1>
+          <span class="text-[9px] bg-sky-500/10 text-sky-400 font-semibold px-1.5 py-0.2 rounded border border-sky-500/20 flex items-center gap-1">
+            <span>TMA</span>
+          </span>
+        </div>
+        <!-- وضعیت زنده آتو سیو تلگرام -->
+        <div class="flex items-center gap-1.5 text-[10px]">
+          <span id="tg-user-greeting" class="text-slate-400 truncate max-w-[120px]">کاربر تلگرام</span>
+          <span class="text-slate-600">•</span>
+          <span id="auto-save-indicator" class="text-emerald-400 font-medium flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>آتو سیو ابری فعال ✓</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button id="btn-sync-cloud-refresh" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition tap-effect" title="همگام‌سازی ابری">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      </button>
+      <button id="btn-open-add-trade-top" class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition tap-effect">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>ترید جدید</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- بدنه اصلی برنامه -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-5 space-y-4">
+
+    <!-- اعلان وضعیت سینک -->
+    <div id="tma-sync-banner" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span class="text-[11px]">قابلیت <b>Auto-Save</b> روی تلگرام دسکتاپ و اندروید از طریق فضای ابری تلگرام فعال است.</span>
+      </div>
+      <button id="btn-close-sync-banner" class="text-slate-500 hover:text-slate-300 text-xs px-1">&times;</button>
+    </div>
+
+    <!-- تب ۱: داشبورد -->
+    <section id="view-dashboard" class="space-y-4">
+      
+      <!-- کارت موجودی و دیسیپلین تریدر -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-[#131b2e] to-slate-900 border border-slate-800 p-4 sm:p-5 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-medium text-slate-400">بالانس لحظه‌ای حساب:</span>
+              <button id="btn-edit-balance" class="text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20" title="تغییر موجودی اولیه">
+                <span>تغییر بالانس پایه</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+              </button>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="hero-net-pnl" class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono tracking-tight">$10,000.00</span>
+              <span id="hero-return-pct" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">+0.0%</span>
+            </div>
+            <span id="hero-initial-label" class="text-[10px] text-slate-500 font-mono block mt-0.5">بالانس اولیه: $10,000</span>
+          </div>
+          <div class="text-left rtl:text-right">
+            <span class="text-xs font-medium text-slate-400 block mb-1">شاخص دیسیپلین و انضباط</span>
+            <div class="flex items-center gap-2">
+              <div class="w-24 bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-700">
+                <div id="hero-discipline-bar" class="bg-gradient-to-r from-emerald-500 to-indigo-500 h-2.5 rounded-full transition-all duration-700" style="width: 100%"></div>
+              </div>
+              <span id="hero-discipline-score" class="text-sm font-bold text-indigo-300 font-mono">100%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 border-t border-slate-800/80">
+          <div class="bg-slate-800/40 rounded-xl p-2.5 border border-slate-700/50">
+            <span class="text-[10px] text-slate-400 block mb-0.5">وین‌ریت (Win Rate)</span>
+            <span id="stat-win-rate" class="text-base sm:text-lg font-bold text-white font-mono">65.0%</span>
+            <span id="stat-win-loss-count" class="text-[9px] text-slate-400 block mt-0.5">13 برد / 7 باخت</span>
+          </div>
+          <div class="bg-slate-800/40 rounded-xl p-2.5 border border-slate-700/50">
+            <span class="text-[10px] text-slate-400 block mb-0.5">پرافیت فاکتور (PF)</span>
+            <span id="stat-profit-factor" class="text-base sm:text-lg font-bold text-emerald-400 font-mono">2.68</span>
+            <span class="text-[9px] text-emerald-400/80 block mt-0.5">سوددهی عالی</span>
+          </div>
+          <div class="bg-slate-800/40 rounded-xl p-2.5 border border-slate-700/50">
+            <span class="text-[10px] text-slate-400 block mb-0.5">میانگین R:R</span>
+            <span id="stat-avg-rr" class="text-base sm:text-lg font-bold text-white font-mono">1:2.4</span>
+            <span class="text-[9px] text-slate-400 block mt-0.5">ریسک به ریوارد</span>
+          </div>
+      <!-- نمودار رشد حساب با قابلیت سوئیچ خطی / کندل‌استیک -->
+      <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              نمودار رشد سرمایه و عملکرد
+            </h2>
+            <p id="chart-type-desc" class="text-[11px] text-slate-400 mt-0.5">نمایش خطی سود و زیان تجمعی</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- سوئیچ نوع چارت (کندل استیک / خطی) -->
+            <div class="flex items-center bg-slate-900 p-0.5 rounded-lg border border-slate-700 text-xs">
+              <button id="btn-chart-line" class="px-2.5 py-1 rounded bg-emerald-500 text-slate-950 font-bold transition tap-effect flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                <span>خطی</span>
+              </button>
+              <button id="btn-chart-candle" class="px-2.5 py-1 rounded text-slate-400 hover:text-white font-medium transition tap-effect flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 3h2v3h2v10H9v5H7v-5H5V6h2V3zm10 4h2v3h2v6h-2v5h-2v-5h-2v-6h2V7z"/></svg>
+                <span>کندل‌استیک</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="relative h-64 w-full">
+          <canvas id="equityChart"></canvas>
+        </div>
+      </div>
+
+      <!-- نمودار راداری عملکرد و مقایسه دیسیپلین -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 shadow-lg flex flex-col justify-between">
+          <div class="mb-2">
+            <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+              </svg>
+              پروفایل پنج‌ضلعی عملکرد (Performance Profile)
+            </h3>
+            <p class="text-[11px] text-slate-400 mt-1">ارزیابی دیسیپلین، وین‌ریت، پرافیت فاکتور، ثبات و ریکاوری فاکتور</p>
+          </div>
+          <div class="relative h-56 w-full flex items-center justify-center">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 shadow-lg flex flex-col justify-between">
+          <div class="mb-3">
+            <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              تأثیر پایبندی به دیسیپلین بر وین‌ریت
+            </h3>
+            <p class="text-[11px] text-slate-400 mt-1">مقایسه تریدهای طبق پلن در برابر تریدهای با نقض قوانین</p>
+          </div>
+
+          <div class="space-y-3 my-auto">
+            <div class="p-3 rounded-xl bg-slate-900/60 border border-emerald-500/30">
+              <div class="flex items-center justify-between text-xs mb-1">
+                <span class="font-bold text-emerald-300">وین‌ریت با دیسیپلین ۱۰۰٪</span>
+                <span id="rate-disciplined" class="font-mono font-extrabold text-emerald-400 text-xs sm:text-sm">81.8%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="bar-disciplined" class="bg-emerald-500 h-2 rounded-full transition-all duration-700" style="width: 81.8%"></div>
+              </div>
+              <span id="sub-disciplined" class="text-[10px] text-slate-400 mt-1 block">۹ برد از ۱۱ ترید با پایبندی به استراتژی</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900/60 border border-rose-500/30">
+              <div class="flex items-center justify-between text-xs mb-1">
+                <span class="font-bold text-rose-300">وین‌ریت هنگام نقض قوانین و فومو</span>
+                <span id="rate-undisciplined" class="font-mono font-extrabold text-rose-400 text-xs sm:text-sm">44.4%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="bar-undisciplined" class="bg-rose-500 h-2 rounded-full transition-all duration-700" style="width: 44.4%"></div>
+              </div>
+              <span id="sub-undisciplined" class="text-[10px] text-slate-400 mt-1 block">تنها ۴ برد از ۹ ترید هیجانی</span>
+            </div>
+          </div>
+
+          <div class="pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <span>میانگین دیسیپلین کل:</span>
+            <span id="discipline-avg-badge" class="font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">86.5 / 100</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- آخرین تریدهای ثبت‌شده -->
+      <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            آخرین معاملات ثبت‌شده
+          </h3>
+          <button id="btn-goto-trades" class="text-xs text-emerald-400 hover:text-emerald-300 font-semibold transition tap-effect">مشاهده همه &larr;</button>
+        </div>
+        <div id="dashboard-recent-trades" class="space-y-2"></div>
+      </div>
+
+    </section>
+
+    <!-- تب ۲: ژورنال معاملات -->
+    <section id="view-trades" class="space-y-4 hidden">
+      <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 shadow-lg space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <h2 class="text-sm sm:text-base font-bold text-white">دفتر ژورنال معاملات</h2>
+            <span id="trades-count-badge" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full font-mono border border-slate-700">20 ترید</span>
+          </div>
+          <button id="btn-open-add-trade-tab" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition tap-effect">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>ثبت معامله جدید</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-slate-800">
+          <div>
+            <label for="filter-symbol" class="text-[10px] text-slate-400 block mb-0.5">نماد (Symbol)</label>
+            <select id="filter-symbol" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="ALL">همه نمادها</option>
+              <option value="XAUUSD">XAUUSD (طلا)</option>
+              <option value="EURUSD">EURUSD (یورو/دلار)</option>
+              <option value="GBPUSD">GBPUSD (پوند/دلار)</option>
+              <option value="BTCUSDT">BTCUSDT (بیت‌کوین)</option>
+              <option value="ETHUSDT">ETHUSDT (اتریوم)</option>
+              <option value="US30">US30 (داوجونز)</option>
+              <option value="NAS100">NAS100 (نزدک)</option>
+            </select>
+          </div>
+          <div>
+            <label for="filter-result" class="text-[10px] text-slate-400 block mb-0.5">نتیجه معامله</label>
+            <select id="filter-result" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="ALL">همه نتایج</option>
+              <option value="WIN">فقط سودده (WIN 🟢)</option>
+              <option value="LOSS">فقط زیان‌ده (LOSS 🔴)</option>
+              <option value="BE">سر‌به‌سر (BE ⚪)</option>
+            </select>
+          </div>
+          <div>
+            <label for="filter-discipline" class="text-[10px] text-slate-400 block mb-0.5">سطح دیسیپلین</label>
+            <select id="filter-discipline" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="ALL">همه سطوح دیسیپلین</option>
+              <option value="PERFECT">۱۰۰٪ پایبندی به چک‌لیست ⭐</option>
+              <option value="PARTIAL">بین ۷۰٪ تا ۹۹٪ پایبندی</option>
+              <option value="POOR">کمتر از ۷۰٪ (نقض دیسیپلین ⚠️)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="trades-list-container" class="space-y-2.5"></div>
+    </section>
+
+    <!-- تب ۳: تقویم ماهانه -->
+    <section id="view-calendar" class="space-y-4 hidden">
+      <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              تقویم ماهانه معاملات
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">عملکرد روزانه، تعداد تریدها و سود/زیان هر روز</p>
+          </div>
+          <div class="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-700">
+            <button id="cal-prev-month" class="p-1 rounded text-slate-400 hover:text-white transition tap-effect">
+              <svg class="w-3.5 h-3.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <span id="cal-month-title" class="text-xs font-bold font-mono text-white min-w-[90px] text-center">October 2026</span>
+            <button id="cal-next-month" class="p-1 rounded text-slate-400 hover:text-white transition tap-effect">
+              <svg class="w-3.5 h-3.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-center mb-3">
+          <div>
+            <span class="text-[9px] text-slate-400 block">برایند ماه</span>
+            <span id="cal-month-pnl" class="text-xs font-bold text-emerald-400 font-mono">+$1,450.00</span>
+          </div>
+          <div>
+            <span class="text-[9px] text-slate-400 block">روزهای سبز / قرمز</span>
+            <span id="cal-month-ratio" class="text-xs font-bold text-white font-mono">11🟢 / 3🔴</span>
+          </div>
+          <div>
+            <span class="text-[9px] text-slate-400 block">دیسیپلین ماه</span>
+            <span id="cal-month-disc" class="text-xs font-bold text-indigo-400 font-mono">91%</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-1.5">
+          <span>دوش</span>
+          <span>سه‌ش</span>
+          <span>چهار</span>
+          <span>پنج</span>
+          <span>جمعه</span>
+          <span class="text-slate-600">شنبه</span>
+          <span class="text-slate-600">یکش</span>
+        </div>
+
+        <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
+
+        <div id="calendar-selected-day-box" class="mt-3 p-3 rounded-xl bg-slate-900 border border-slate-700/80 hidden">
+          <div class="flex items-center justify-between mb-2">
+            <h4 id="cal-selected-day-title" class="text-xs font-bold text-white">ترید‌های روز انتخاب‌شده</h4>
+            <span id="cal-selected-day-summary" class="text-xs font-mono font-bold text-emerald-400">+$250 (2 ترید)</span>
+          </div>
+          <div id="cal-selected-day-trades" class="space-y-1.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- تب ۴: مدیریت چک‌لیست و دیسیپلین -->
+    <section id="view-discipline" class="space-y-4 hidden">
+      <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 sm:p-5 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+              </svg>
+              موتور هوشمند محاسبه دیسیپلین معاملاتی
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">قوانین شخصی خود را اضافه کنید تا در هر پوزیشن بررسی شوند.</p>
+          </div>
+          <button id="btn-open-add-rule" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition tap-effect">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>افزودن قانون</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-4">
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-extrabold text-base font-mono" id="disc-grade-badge">A+</div>
+            <div>
+              <span class="text-[10px] text-slate-400 block">سطح انضباط</span>
+              <span class="text-xs font-bold text-white">تریدر پایبند به پلن</span>
+            </div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-extrabold text-base font-mono" id="disc-avg-pct">88%</div>
+            <div>
+              <span class="text-[10px] text-slate-400 block">میانگین رعایت قوانین</span>
+              <span class="text-xs font-bold text-white">در ۲۰ ترید گذشته</span>
+            </div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-extrabold text-base font-mono" id="disc-perfect-count">11</div>
+            <div>
+              <span class="text-[10px] text-slate-400 block">معاملات با نمره ۱۰۰٪</span>
+              <span class="text-xs font-bold text-emerald-400">۹ مورد سودده بوده است</span>
+            </div>
+          </div>
+        </div>
+        <!-- Checklist Rules List -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+            <span>چک‌لیست قوانین معاملاتی:</span>
+            <span id="rules-count-text">۶ قانون تعریف‌شده</span>
+          </div>
+          <div id="checklist-rules-list" class="space-y-1.5"></div>
+        </div>
+      </div>
+
+      <!-- بیشترین قوانین نقض‌شده -->
+      <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 shadow-lg">
+        <h3 class="text-xs sm:text-sm font-bold text-white mb-1 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          آنالیز اشتباهات: بیشترین قوانین نقض‌شده
+        </h3>
+        <p class="text-[11px] text-slate-400 mb-3">شناسایی عادات مخرب برای جلوگیری از ضررهای پیاپی:</p>
+        <div id="broken-rules-container" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- تب ۵: آنالیز آماری و خروجی -->
+    <section id="view-analytics" class="space-y-4 hidden">
+      <div class="bg-[#131b2e] rounded-2xl border border-slate-800 p-4 sm:p-5 shadow-lg space-y-4">
+        <div>
+          <h2 class="text-sm sm:text-base font-bold text-white">تفکیک سود و زیان بر اساس نمادها</h2>
+          <p class="text-[11px] text-slate-400 mt-0.5">آنالیز دارایی‌ها و جفت‌ارزهای مختلف</p>
+        </div>
+
+        <div class="relative h-60 w-full">
+          <canvas id="symbolChart"></canvas>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-800">
+          <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex flex-col items-center">
+            <h4 class="text-xs font-bold text-white mb-2 self-start">نسبت برد و باخت (Win / Loss)</h4>
+            <div class="relative h-44 w-44">
+              <canvas id="winLossChart"></canvas>
+            </div>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
+            <div>
+              <h4 class="text-xs font-bold text-white mb-2">موقعیت‌های خرید و فروش (Long vs Short)</h4>
+              <div class="space-y-2.5">
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-emerald-400 font-bold">خرید (Long 🟢)</span>
+                    <span id="long-stat" class="font-mono text-white text-[11px]">12 ترید (وین‌ریت 75%)</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div id="long-bar" class="bg-emerald-500 h-1.5 rounded-full" style="width: 75%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-rose-400 font-bold">فروش (Short 🔴)</span>
+                    <span id="short-stat" class="font-mono text-white text-[11px]">8 ترید (وین‌ریت 50%)</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div id="short-bar" class="bg-rose-500 h-1.5 rounded-full" style="width: 50%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-2.5 bg-slate-800/50 rounded-lg border border-slate-700/60 text-[11px] text-slate-300 mt-3">
+              <span class="font-bold text-emerald-400 block mb-0.5">💡 بینش ابری تلگرام:</span>
+              داده‌های شما بلافاصله پس از ثبت در حافظه محلی و CloudStorage تلگرام آتو سیو می‌شوند و در هر زمان با دکمه همگام‌سازی قابل بازیابی هستند.
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2">
+            <button id="btn-export-full-data" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition tap-effect flex items-center gap-1.5 border border-slate-700">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span>دانلود فایل JSON</span>
+            </button>
+            <button id="btn-load-sample-data" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition tap-effect flex items-center gap-1.5 border border-slate-700">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>بارگذاری دیتای نمونه</span>
+            </button>
+          </div>
+          <button id="btn-clear-all-data" class="text-xs text-rose-400 hover:text-rose-300 transition tap-effect">
+            پاک کردن داده‌ها
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- منوی تب‌های پایین صفحه -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#0f172a]/95 backdrop-blur-lg border-t border-slate-800 px-2 py-2 flex items-center justify-around max-w-lg mx-auto sm:rounded-t-2xl tg-safe-bottom">
+    <button id="nav-btn-dashboard" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-emerald-400 font-bold transition tap-effect" data-target="view-dashboard">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+      <span class="text-[10px]">داشبورد</span>
+    </button>
+
+    <button id="nav-btn-trades" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-slate-400 hover:text-white transition tap-effect" data-target="view-trades">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      <span class="text-[10px]">تریدها</span>
+    </button>
+
+    <button id="nav-btn-add" class="flex flex-col items-center justify-center -mt-6 w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 shadow-lg shadow-emerald-500/30 transition transform active:scale-95" title="ثبت ترید">
+      <svg class="w-6 h-6 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M12 4v16m8-8H4"></path></svg>
+    </button>
+
+    <button id="nav-btn-calendar" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-slate-400 hover:text-white transition tap-effect" data-target="view-calendar">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+      <span class="text-[10px]">تقویم</span>
+    </button>
+
+    <button id="nav-btn-discipline" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-slate-400 hover:text-white transition tap-effect" data-target="view-discipline">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+      <span class="text-[10px]">دیسیپلین</span>
+    </button>
+
+    <button id="nav-btn-analytics" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-slate-400 hover:text-white transition tap-effect" data-target="view-analytics">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+      <span class="text-[10px]">تحلیل</span>
+    </button>
+  </nav>
+
+  <!-- مدال ثبت / ویرایش معامله -->
+  <div id="modal-trade" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div class="bg-[#131b2e] border border-slate-700 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-200">
+      
+      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+        <div>
+          <h3 class="text-sm sm:text-base font-bold text-white">ثبت معامله جدید (Trade Entry)</h3>
+          <p class="text-[11px] text-slate-400">اطلاعات ترید و وضعیت تیک‌های چک‌لیست را وارد کنید</p>
+        </div>
+        <button id="btn-close-trade-modal" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <form id="form-trade" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3.5">
+        <input type="hidden" id="trade-edit-id" value="">
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+  <!-- مدال ویرایش بالانس اولیه حساب -->
+  <div id="modal-initial-balance" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#131b2e] border border-slate-700 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          تنظیم بالانس اولیه حساب
+        </h3>
+        <button id="btn-close-balance-modal" class="p-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <form id="form-initial-balance" class="space-y-3">
+        <div>
+          <label for="input-starting-balance" class="block text-xs text-slate-300 mb-1">موجودی پایه حساب ($)</label>
+          <input type="number" step="any" id="input-starting-balance" required placeholder="مثلاً 5000 یا 10000" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none">
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition tap-effect">ذخیره موجودی پایه</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- مدال ویرایش قانون چک‌لیست -->
+  <div id="modal-edit-rule" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#131b2e] border border-slate-700 w-full max-w-md rounded-2xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+          ویرایش قانون چک‌لیست
+        </h3>
+        <button id="btn-close-edit-rule-modal" class="p-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <form id="form-edit-rule" class="space-y-3">
+        <input type="hidden" id="edit-rule-id">
+        <div>
+          <label for="edit-rule-text" class="block text-xs font-semibold text-slate-300 mb-1">متن قانون</label>
+          <input type="text" id="edit-rule-text" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none">
+        </div>
+        <div>
+          <label for="edit-rule-cat" class="block text-xs font-semibold text-slate-300 mb-1">دسته‌بندی</label>
+          <select id="edit-rule-cat" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none">
+            <option value="استراتژی تکنیکال">استراتژی تکنیکال</option>
+            <option value="مدیریت ریسک و سرمایه">مدیریت ریسک و سرمایه</option>
+            <option value="روانشناسی و احساسات">روانشناسی و احساسات</option>
+            <option value="اخبار و زمان‌بندی">اخبار و زمان‌بندی</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition tap-effect">بروزرسانی قانون</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- مدال ثبت سریع عملکرد روزانه از تقویم -->
+  <div id="modal-calendar-pnl" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#131b2e] border border-slate-700 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-3.5">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div>
+          <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            ثبت سریع سود/زیان روزانه
+          </h3>
+          <span id="cal-modal-datestr" class="text-[10px] text-slate-400 font-mono">2026-10-15</span>
+        </div>
+        <button id="btn-close-cal-modal" class="p-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <form id="form-calendar-quick-entry" class="space-y-3">
+        <input type="hidden" id="cal-modal-target-date">
+        <div>
+          <label for="cal-modal-symbol" class="block text-[11px] text-slate-300 mb-1">نماد معاملاتی (اختیاری)</label>
+          <input type="text" id="cal-modal-symbol" placeholder="مثلاً XAUUSD یا DAILY" value="DAILY" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white uppercase font-mono focus:border-emerald-500 focus:outline-none">
+        </div>
+        <div>
+          <label for="cal-modal-type" class="block text-[11px] text-slate-300 mb-1">نتیجه این روز</label>
+          <select id="cal-modal-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:border-emerald-500 focus:outline-none">
+            <option value="WIN">🟢 روز سودده (Profit)</option>
+            <option value="LOSS">🔴 روز زیان‌ده (Loss)</option>
+          </select>
+        </div>
+        <div>
+          <label for="cal-modal-amount" class="block text-[11px] text-slate-300 mb-1">مبلغ سود یا زیان دلار ($)</label>
+          <input type="number" step="any" id="cal-modal-amount" required placeholder="مثلاً 250" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none">
+          <span class="text-[9px] text-slate-500 mt-1 block">در صورت انتخاب زیان، مبلغ به صورت خودکار منفی ثبت می‌شود.</span>
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-xs transition tap-effect">ثبت در تقویم و بازنگری بالانس</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- مدال افزودن قانون به چک‌لیست -->
+  <div id="modal-add-rule" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#131b2e] border border-slate-700 w-full max-w-md rounded-2xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          افزودن قانون جدید به چک‌لیست
+        </h3>
+        <button id="btn-close-rule-modal" class="p-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <form id="form-rule" class="space-y-3">
+        <div>
+          <label for="rule-title-input" class="block text-xs font-semibold text-slate-300 mb-1">عنوان قانون *</label>
+          <input type="text" id="rule-title-input" required placeholder="e.g. عدم ترید پس از ۲ ضرر متوالی در روز" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none">
+        </div>
+        <div>
+          <label for="rule-category-select" class="block text-xs font-semibold text-slate-300 mb-1">دسته‌بندی</label>
+          <select id="rule-category-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none">
+            <option value="استراتژی تکنیکال">استراتژی تکنیکال</option>
+            <option value="مدیریت ریسک و سرمایه">مدیریت ریسک و سرمایه</option>
+            <option value="روانشناسی و احساسات">روانشناسی و احساسات</option>
+            <option value="اخبار و زمان‌بندی">اخبار و زمان‌بندی</option>
+          </select>
+        </div>
+        <div class="pt-1.5">
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition tap-effect">
+            افزودن به چک‌لیست
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-11/12 max-w-sm"></div>
+
+  <!-- منطق جاوااسکریپت برنامه و ارتباط با تلگرام -->
+  <script>
+    window.addEventListener('error', function(e) {
+      if (e.message === 'Script error.' || !e.filename) return true;
+    });
+
+    const tg = typeof window !== 'undefined' && window.Telegram ? window.Telegram.WebApp : null;
+    let currentUserId = 'guest';
+
+    if (tg) {
+      try {
+        if (typeof tg.ready === 'function') tg.ready();
+        if (typeof tg.expand === 'function') tg.expand();
+        if (typeof tg.enableClosingConfirmation === 'function') tg.enableClosingConfirmation();
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+          currentUserId = String(tg.initDataUnsafe.user.id);
+        }
+      } catch (e) {
+        console.warn('Telegram setup error:', e);
+      }
+    }
+
+    // هر کاربر بر اساس شناسه اختصاصی تلگرام خود در حافظه ذخیره می‌شود
+    const STORAGE_KEY_TRADES = `tm_user_${currentUserId}_trades`;
+    const STORAGE_KEY_RULES = `tm_user_${currentUserId}_rules`;
+    const STORAGE_KEY_BALANCE = `tm_user_${currentUserId}_balance`;
+    const STORAGE_KEY_CLOUD = `tm_profile_${currentUserId}`;
+
+    function triggerHaptic(type = 'light') {
+      try {
+        if (tg && tg.HapticFeedback) {
+          if (type === 'success' || type === 'error' || type === 'warning') {
+            tg.HapticFeedback.notificationOccurred(type);
+          } else {
+            tg.HapticFeedback.impactOccurred(type);
+          }
+        }
+      } catch (e) {}
+    }
+
+    const DEFAULT_RULES = [
+      { id: 'r1', text: 'تأییدیه تایم‌فریم بالاتر (HTF Trend Aligned)', category: 'استراتژی تکنیکال', active: true },
+      { id: 'r2', text: 'ریسک حداکثر ۱٪ از موجودی کل حساب (Max 1% Risk)', category: 'مدیریت ریسک و سرمایه', active: true },
+      { id: 'r3', text: 'عدم معامله ۳۰ دقیقه قبل و بعد از اخبار قرمز (High Impact News)', category: 'اخبار و زمان‌بندی', active: true },
+      { id: 'r4', text: 'تعیین دقیق حد سود و حد ضرر قبل از کلیک ورود (Fixed SL/TP)', category: 'مدیریت ریسک و سرمایه', active: true },
+      { id: 'r5', text: 'نسبت سود به زیان حداقل 1:2 (Min 1:2 RR)', category: 'استراتژی تکنیکال', active: true },
+      { id: 'r6', text: 'ورود بدون حس فومو و خستگی ذهنی (No FOMO / Revenge)', category: 'روانشناسی و احساسات', active: true }
+    ];
+
+    let appState = {
+      initialBalance: 10000,
+      trades: [],
+      rules: [],
+      activeView: 'view-dashboard',
+      chartMode: 'line', // 'line' or 'candlestick'
+      calCurrentDate: new Date('2026-10-31')
+    };
+
+    function loadState() {
+      try {
+        const storedBalance = localStorage.getItem(STORAGE_KEY_BALANCE);
+        const storedTrades = localStorage.getItem(STORAGE_KEY_TRADES);
+        const storedRules = localStorage.getItem(STORAGE_KEY_RULES);
+
+        if (storedBalance) appState.initialBalance = Number(storedBalance) || 10000;
+        appState.trades = storedTrades ? JSON.parse(storedTrades) : [];
+        appState.rules = storedRules ? JSON.parse(storedRules) : DEFAULT_RULES;
+      } catch (e) {
+        console.warn('LocalStorage fallback', e);
+        appState.trades = [];
+        appState.rules = DEFAULT_RULES;
+      }
+
+      // خواندن از کلود اختصاصی این کاربر در تلگرام
+      if (tg && tg.CloudStorage && typeof tg.CloudStorage.getItem === 'function') {
+        tg.CloudStorage.getItem(STORAGE_KEY_CLOUD, (err, val) => {
+          if (!err && val) {
+            try {
+              const cloud = JSON.parse(val);
+              if (cloud) {
+                if (typeof cloud.initialBalance === 'number') appState.initialBalance = cloud.initialBalance;
+                if (Array.isArray(cloud.trades)) appState.trades = cloud.trades;
+                if (Array.isArray(cloud.rules)) appState.rules = cloud.rules;
+                renderAllViews();
+                updateAutoSaveIndicator('همگام با حساب کاربری تلگرام ✓');
+              }
+            } catch (ex) {
+              console.warn('Telegram Cloud parsing error', ex);
+            }
+          }
+        });
+      }
+    }
+
+    let saveTimeout = null;
+    function autoSaveState() {
+      updateAutoSaveIndicator('در حال ذخیره... ⏳');
+
+      try {
+        localStorage.setItem(STORAGE_KEY_BALANCE, String(appState.initialBalance));
+        localStorage.setItem(STORAGE_KEY_TRADES, JSON.stringify(appState.trades));
+        localStorage.setItem(STORAGE_KEY_RULES, JSON.stringify(appState.rules));
+      } catch (e) {
+        console.warn('LocalStorage save failed', e);
+      }
+
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        try {
+          if (tg && tg.CloudStorage && typeof tg.CloudStorage.setItem === 'function') {
+            const payload = JSON.stringify({
+              userId: currentUserId,
+              initialBalance: appState.initialBalance,
+              trades: appState.trades,
+              rules: appState.rules,
+              lastSaved: new Date().toISOString()
+            });
+            tg.CloudStorage.setItem(STORAGE_KEY_CLOUD, payload, (err, success) => {
+              if (!err && success) {
+                updateAutoSaveIndicator('آتو سیو ابری پرونده فعال ✓');
+              } else {
+                updateAutoSaveIndicator('آتو سیو محلی فعال ✓');
+              }
+            });
+          } else {
+            updateAutoSaveIndicator('آتو سیو محلی فعال ✓');
+          }
+        } catch (err) {
+          updateAutoSaveIndicator('آتو سیو محلی فعال ✓');
+        }
+      }, 400);
+    }
+
+    function updateAutoSaveIndicator(text) {
+      const el = document.getElementById('auto-save-indicator');
+      if (el) {
+        el.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>${text}</span>`;
+      }
+    }
+
+    function computeDisciplineScore(trade) {
+      if (!appState.rules || appState.rules.length === 0) return 100;
+      const activeRules = appState.rules.filter(r => r.active);
+      if (activeRules.length === 0) return 100;
+      const checked = trade.checkedRules || [];
+      const matchCount = activeRules.filter(r => checked.includes(r.id)).length;
+      return Math.round((matchCount / activeRules.length) * 100);
+    }
+
+    function computeMetrics() {
+      const trades = [...appState.trades].sort((a,b) => new Date(a.date) - new Date(b.date));
+      const totalTrades = trades.length;
+
+      let netProfit = 0, grossProfit = 0, grossLoss = 0, wins = 0, losses = 0, bes = 0, totalRR = 0, totalDiscipline = 0;
+      let discWins = 0, discTotal = 0, undiscWins = 0, undiscTotal = 0;
+
+      trades.forEach(t => {
+        const pnl = Number(t.pnl) || 0;
+        netProfit += pnl;
+        if (pnl > 0) { grossProfit += pnl; wins++; }
+        else if (pnl < 0) { grossLoss += Math.abs(pnl); losses++; }
+        else { bes++; }
+
+        totalRR += Number(t.rr) || 0;
+        const disc = computeDisciplineScore(t);
+        totalDiscipline += disc;
+
+        if (disc === 100) { discTotal++; if (pnl > 0) discWins++; }
+        else { undiscTotal++; if (pnl > 0) undiscWins++; }
+      });
+
+      const currentBalance = appState.initialBalance + netProfit;
+      const returnPct = appState.initialBalance > 0 ? ((netProfit / appState.initialBalance) * 100) : 0;
+      const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100) : 0;
+      const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss) : (grossProfit > 0 ? 9.99 : 0);
+      const avgRR = totalTrades > 0 ? (totalRR / totalTrades) : 0;
+      const avgDiscipline = totalTrades > 0 ? (totalDiscipline / totalTrades) : 100;
+
+      return {
+        totalTrades,
+        netProfit,
+        currentBalance,
+        returnPct: returnPct.toFixed(1),
+        winRate: winRate.toFixed(1),
+        wins, losses, bes,
+        profitFactor: profitFactor.toFixed(2),
+        avgRR: avgRR.toFixed(1),
+        avgDiscipline: avgDiscipline.toFixed(1),
+        disciplinedWinRate: discTotal > 0 ? Math.round((discWins / discTotal) * 100) : 0,
+        undisciplinedWinRate: undiscTotal > 0 ? Math.round((undiscWins / undiscTotal) * 100) : 0,
+        discWins, discTotal, undiscWins, undiscTotal,
+        radar: {
+          winRate: Math.min(100, Math.round(winRate)),
+          pf: Math.min(100, Math.round((profitFactor / 3) * 100)),
+          disc: Math.min(100, Math.round(avgDiscipline)),
+          consistency: Math.min(100, Math.round(Math.max(20, 100 - (losses * 4)))),
+          recovery: Math.min(100, Math.round(profitFactor > 1.5 ? 85 : 55))
+        }
+      };
+    }
+
+    let equityChartInstance = null, radarChartInstance = null, symbolChartInstance = null, winLossChartInstance = null;
+
+    function renderCharts() {
+      if (typeof Chart === 'undefined') return;
+      const metrics = computeMetrics();
+      const sortedTrades = [...appState.trades].sort((a,b) => new Date(a.date) - new Date(b.date));
+
+      const ctxEquity = document.getElementById('equityChart');
+      if (ctxEquity) {
+        if (equityChartInstance) equityChartInstance.destroy();
+
+        if (appState.chartMode === 'candlestick') {
+          // تجمیع روزانه معاملات و ساخت کندل‌های OHLC حساب
+          const dayGroups = {};
+          sortedTrades.forEach(t => {
+            dayGroups[t.date] = dayGroups[t.date] || [];
+            dayGroups[t.date].push(Number(t.pnl) || 0);
+          });
+
+          const candleData = [];
+          let prevClose = appState.initialBalance;
+
+          const sortedDates = Object.keys(dayGroups).sort();
+          if (sortedDates.length === 0) {
+            // کندل بیس پیش‌فرض در صورت نبود ترید
+            candleData.push({
+              x: luxon.DateTime.now().toMillis(),
+              o: appState.initialBalance,
+              h: appState.initialBalance,
+              l: appState.initialBalance,
+              c: appState.initialBalance
+            });
+          } else {
+            sortedDates.forEach(d => {
+              const pnls = dayGroups[d];
+              let open = prevClose;
+              let high = open;
+              let low = open;
+              let running = open;
+
+              pnls.forEach(val => {
+                running += val;
+                if (running > high) high = running;
+                if (running < low) low = running;
+              });
+
+              let close = running;
+              candleData.push({
+                x: luxon.DateTime.fromISO(d).toMillis(),
+                o: open,
+                h: high,
+                l: low,
+                c: close
+              });
+              prevClose = close;
+            });
+          }
+
+          equityChartInstance = new Chart(ctxEquity, {
+            type: 'candlestick',
+            data: {
+              datasets: [{
+                label: 'کندل رشد بالانس',
+                data: candleData,
+                color: {
+                  up: '#10b981',
+                  down: '#f43f5e',
+                  unchanged: '#94a3b8'
+                }
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  type: 'time',
+                  time: { unit: 'day' },
+                  grid: { color: '#1e293b' },
+                  ticks: { color: '#94a3b8', font: { size: 10 } }
+                },
+                y: {
+                  grid: { color: '#1e293b' },
+                  ticks: { color: '#94a3b8', callback: v => '$' + Number(v).toLocaleString() }
+                }
+              }
+            }
+          });
+
+        } else {
+          // حالت خطی پیوسته
+          let runningBal = appState.initialBalance;
+          const labels = ['شروع', ...sortedTrades.map(t => t.date.slice(5))];
+          const dataPoints = [appState.initialBalance];
+          sortedTrades.forEach(t => {
+            runningBal += Number(t.pnl) || 0;
+            dataPoints.push(runningBal);
+          });
+
+          equityChartInstance = new Chart(ctxEquity, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'موجودی حساب',
+                data: dataPoints,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 2.5,
+                pointRadius: 2.5
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: { label: ctx => ' بالانس: $' + Number(ctx.parsed.y).toLocaleString() }
+                }
+              },
+              scales: {
+                x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => '$' + Number(v).toLocaleString() } }
+              }
+            }
+          });
+        }
+      }
+
+      // 2. نمودار راداری
+      const ctxRadar = document.getElementById('radarChart');
+      if (ctxRadar) {
+        if (radarChartInstance) radarChartInstance.destroy();
+        radarChartInstance = new Chart(ctxRadar, {
+          type: 'radar',
+          data: {
+            labels: ['وین‌ریت', 'پرافیت فاکتور', 'دیسیپلین', 'ثبات', 'ریکاوری'],
+            datasets: [{
+              data: [metrics.radar.winRate, metrics.radar.pf, metrics.radar.disc, metrics.radar.consistency, metrics.radar.recovery],
+              backgroundColor: 'rgba(99, 102, 241, 0.25)',
+              borderColor: '#818cf8',
+              borderWidth: 2,
+              pointBackgroundColor: '#818cf8',
+              pointRadius: 3.5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              r: {
+                angleLines: { color: '#1e293b' },
+                grid: { color: '#1e293b' },
+                pointLabels: { color: '#cbd5e1', font: { size: 9, family: 'Vazirmatn' } },
+                ticks: { display: false, min: 0, max: 100 }
+              }
+            }
+          }
+        });
+      }
+
+      // 3. نمودار نمادها
+      const ctxSymbol = document.getElementById('symbolChart');
+      if (ctxSymbol) {
+        if (symbolChartInstance) symbolChartInstance.destroy();
+        const symbolMap = {};
+        appState.trades.forEach(t => {
+          const sym = t.symbol.toUpperCase();
+          symbolMap[sym] = (symbolMap[sym] || 0) + (Number(t.pnl) || 0);
+        });
+        const symLabels = Object.keys(symbolMap);
+        const symValues = Object.values(symbolMap);
+        symbolChartInstance = new Chart(ctxSymbol, {
+          type: 'bar',
+          data: {
+            labels: symLabels,
+            datasets: [{
+              data: symValues,
+              backgroundColor: symValues.map(v => v >= 0 ? '#10b981' : '#f43f5e'),
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+              y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', callback: v => '$' + v } }
+            }
+          }
+        });
+      }
+
+      // 4. نمودار دونات
+      const ctxWinLoss = document.getElementById('winLossChart');
+      if (ctxWinLoss) {
+        if (winLossChartInstance) winLossChartInstance.destroy();
+        winLossChartInstance = new Chart(ctxWinLoss, {
+          type: 'doughnut',
+          data: {
+            labels: ['سود', 'زیان', 'سر‌به‌سر'],
+            datasets: [{
+              data: [metrics.wins, metrics.losses, metrics.bes],
+              backgroundColor: ['#10b981', '#f43f5e', '#64748b'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } } },
+            cutout: '68%'
+          }
+        });
+      }
+    }
+
+    function updateDashboard() {
+      const m = computeMetrics();
+      const heroPnl = document.getElementById('hero-net-pnl');
+      if (heroPnl) {
+        heroPnl.textContent = '$' + m.currentBalance.toLocaleString();
+        heroPnl.className = 'text-2xl sm:text-3xl font-extrabold font-mono tracking-tight ' + (m.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400');
+      }
+
+      const heroReturn = document.getElementById('hero-return-pct');
+      if (heroReturn) {
+        heroReturn.textContent = (m.returnPct >= 0 ? '+' : '') + m.returnPct + '%';
+        heroReturn.className = 'text-xs font-semibold px-2 py-0.5 rounded-md font-mono border ' + 
+          (m.returnPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20');
+      }
+
+      const initLabel = document.getElementById('hero-initial-label');
+      if (initLabel) initLabel.textContent = `بالانس اولیه: $${appState.initialBalance.toLocaleString()} (سود کل: ${m.netProfit >= 0 ? '+' : ''}$${m.netProfit.toLocaleString()})`;
+
+      const discBar = document.getElementById('hero-discipline-bar');
+      const discScore = document.getElementById('hero-discipline-score');
+      if (discBar) discBar.style.width = m.avgDiscipline + '%';
+      if (discScore) discScore.textContent = Math.round(m.avgDiscipline) + '%';
+
+      document.getElementById('stat-win-rate').textContent = m.winRate + '%';
+      document.getElementById('stat-win-loss-count').textContent = `${m.wins} برد / ${m.losses} باخت`;
+      document.getElementById('stat-profit-factor').textContent = m.profitFactor;
+      document.getElementById('stat-avg-rr').textContent = '1:' + m.avgRR;
+      document.getElementById('stat-total-trades').textContent = m.totalTrades;
+
+      document.getElementById('rate-disciplined').textContent = m.disciplinedWinRate + '%';
+      document.getElementById('bar-disciplined').style.width = m.disciplinedWinRate + '%';
+      document.getElementById('sub-disciplined').textContent = `${m.discWins} برد از ${m.discTotal} ترید با استراتژی`;
+
+      document.getElementById('rate-undisciplined').textContent = m.undisciplinedWinRate + '%';
+      document.getElementById('bar-undisciplined').style.width = m.undisciplinedWinRate + '%';
+      document.getElementById('sub-undisciplined').textContent = `${m.undiscWins} برد از ${m.undiscTotal} ترید هیجانی`;
+
+      document.getElementById('discipline-avg-badge').textContent = `${m.avgDiscipline} / 100`;
+
+      renderDashboardRecentTrades();
+    }
+
+    function renderDashboardRecentTrades() {
+      const container = document.getElementById('dashboard-recent-trades');
+      if (!container) return;
+      const sorted = [...appState.trades].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 4);
+
+      if (sorted.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 py-3 text-center">هنوز هیچ معامله‌ای ثبت نشده است.</p>';
+        return;
+      }
+
+      container.innerHTML = sorted.map(t => {
+        const disc = computeDisciplineScore(t);
+        const isWin = Number(t.pnl) >= 0;
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs font-mono ${t.direction === 'LONG' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                ${t.direction === 'LONG' ? 'L' : 'S'}
+              </span>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-white font-mono">${t.symbol}</span>
+                  <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">نمره: ${disc}%</span>
+                </div>
+                <span class="text-[9px] text-slate-400 font-mono">${t.date}</span>
+              </div>
+            </div>
+            <div class="text-left rtl:text-right">
+              <span class="text-xs font-bold font-mono ${isWin ? 'text-emerald-400' : 'text-rose-400'}">
+                ${isWin ? '+$' : '-$'}${Math.abs(t.pnl).toLocaleString()}
+              </span>
+              <span class="text-[9px] text-slate-400 block font-mono">1:${t.rr || '1.0'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTradesList() {
+      const container = document.getElementById('trades-list-container');
+      if (!container) return;
+
+      const symFilter = document.getElementById('filter-symbol')?.value || 'ALL';
+      const resFilter = document.getElementById('filter-result')?.value || 'ALL';
+      const discFilter = document.getElementById('filter-discipline')?.value || 'ALL';
+
+      let filtered = [...appState.trades].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+      if (symFilter !== 'ALL') filtered = filtered.filter(t => t.symbol.toUpperCase() === symFilter);
+      if (resFilter !== 'ALL') filtered = filtered.filter(t => t.result === resFilter);
+      if (discFilter !== 'ALL') {
+        filtered = filtered.filter(t => {
+          const s = computeDisciplineScore(t);
+          if (discFilter === 'PERFECT') return s === 100;
+          if (discFilter === 'PARTIAL') return s >= 70 && s < 100;
+          if (discFilter === 'POOR') return s < 70;
+          return true;
+        });
+      }
+
+      document.getElementById('trades-count-badge').textContent = `${filtered.length} ترید`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="p-6 text-center bg-[#131b2e] rounded-2xl border border-slate-800"><p class="text-xs text-slate-400">معامله‌ای یافت نشد.</p></div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(t => {
+        const disc = computeDisciplineScore(t);
+        const isWin = Number(t.pnl) >= 0;
+        return `
+          <div class="p-3.5 rounded-2xl bg-[#131b2e] border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-xs font-bold font-mono ${t.direction === 'LONG' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">${t.direction}</span>
+                <span class="text-xs sm:text-sm font-extrabold text-white font-mono">${t.symbol}</span>
+                <span class="text-[10px] text-slate-400 font-mono">${t.date}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded font-mono ${disc === 100 ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'}">دیسیپلین: ${disc}%</span>
+                <button class="btn-delete-trade text-slate-500 hover:text-rose-400 p-1" data-id="${t.id}" title="حذف">
+                  <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 p-2 rounded-xl bg-slate-900/80 text-center font-mono text-xs">
+              <div><span class="text-[9px] text-slate-400 block font-sans">P&L</span><span class="${isWin ? 'text-emerald-400' : 'text-rose-400'} font-bold">${isWin ? '+' : ''}$${t.pnl}</span></div>
+              <div><span class="text-[9px] text-slate-400 block font-sans">R:R</span><span class="text-white font-bold">1:${t.rr || '1.0'}</span></div>
+              <div><span class="text-[9px] text-slate-400 block font-sans">روانشناسی</span><span class="text-slate-300 font-sans">${t.emotion || 'Calm'}</span></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.btn-delete-trade').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          triggerHaptic('warning');
+          const id = e.currentTarget.getAttribute('data-id');
+          appState.trades = appState.trades.filter(t => t.id !== id);
+          autoSaveState();
+          renderAllViews();
+          showToast('معامله حذف شد', 'info');
+        });
+      });
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      const title = document.getElementById('cal-month-title');
+      if (!grid || !title) return;
+
+      const date = appState.calCurrentDate;
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      title.textContent = `${monthNames[month]} ${year}`;
+
+      const firstDay = new Date(year, month, 1);
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      let startDayOfWeek = firstDay.getDay() - 1;
+      if (startDayOfWeek === -1) startDayOfWeek = 6;
+
+      grid.innerHTML = '';
+      const tradesByDate = {};
+      appState.trades.forEach(t => {
+        const d = new Date(t.date);
+        if (d.getFullYear() === year && d.getMonth() === month) {
+          tradesByDate[t.date] = tradesByDate[t.date] || [];
+          tradesByDate[t.date].push(t);
+        }
+      });
+
+      for (let i = 0; i < startDayOfWeek; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'h-14 sm:h-16 rounded-xl bg-slate-900/30 border border-slate-800/40 opacity-40';
+        grid.appendChild(empty);
+      }
+
+      for (let day = 1; day <= totalDays; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayTrades = tradesByDate[dateStr] || [];
+        let dayPnl = 0;
+        dayTrades.forEach(t => dayPnl += Number(t.pnl) || 0);
+
+        const cell = document.createElement('div');
+        const bgClass = dayTrades.length > 0 
+          ? (dayPnl >= 0 ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-rose-950/30 border-rose-500/40') 
+          : 'bg-slate-900/70 border-slate-800';
+
+        cell.className = `h-14 sm:h-16 rounded-xl p-1 flex flex-col justify-between border cursor-pointer hover:border-slate-500 transition tap-effect ${bgClass}`;
+        cell.innerHTML = `
+          <div class="flex items-center justify-between text-[9px] font-mono">
+            <span class="text-slate-400 font-bold">${day}</span>
+            ${dayTrades.length > 0 ? `<span class="bg-slate-800 text-slate-300 px-1 rounded">${dayTrades.length}</span>` : '<span class="text-[8px] text-slate-600">+</span>'}
+          </div>
+          <div class="text-center font-mono">
+            ${dayTrades.length > 0 ? `<span class="text-[10px] font-bold ${dayPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${dayPnl >= 0 ? '+' : ''}$${Math.abs(dayPnl)}</span>` : '<span class="text-slate-700">-</span>'}
+          </div>
+        `;
+
+        // کلیک روی هر خانه تقویم: باز کردن مدال ثبت مستقیم سود و زیان برای آن تاریخ (گذشته یا امروز)
+        cell.addEventListener('click', () => {
+          triggerHaptic('light');
+          openCalendarDayModal(dateStr, dayTrades, dayPnl);
+        });
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function openCalendarDayModal(dateStr, trades, netPnl) {
+      const modal = document.getElementById('modal-calendar-pnl');
+      const dateLabel = document.getElementById('cal-modal-datestr');
+      const targetInput = document.getElementById('cal-modal-target-date');
+      const amountInput = document.getElementById('cal-modal-amount');
+      if (!modal || !dateLabel || !targetInput) return;
+
+      dateLabel.textContent = `ثبت رکورد معاملاتی برای روز: ${dateStr}`;
+      targetInput.value = dateStr;
+      amountInput.value = '';
+
+      modal.classList.remove('hidden');
+    }
+
+    // رندر بخش چک‌لیست همراه با علامت مداد برای ویرایش
+    function renderChecklistView() {
+      const container = document.getElementById('checklist-rules-list');
+      if (!container) return;
+      document.getElementById('rules-count-text').textContent = `${appState.rules.length} قانون`;
+
+      container.innerHTML = appState.rules.map(r => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+          <div class="flex items-center gap-2.5">
+            <input type="checkbox" class="rule-toggle-active w-4 h-4 rounded text-indigo-500 bg-slate-800 border-slate-700" data-id="${r.id}" ${r.active ? 'checked' : ''}>
+            <div>
+              <span class="text-xs font-semibold ${r.active ? 'text-white' : 'text-slate-500 line-through'}">${r.text}</span>
+              <span class="text-[9px] text-indigo-400 block">${r.category || 'عمومی'}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1">
+            <!-- دکمه ویرایش (علامت مداد) -->
+            <button class="btn-edit-rule text-slate-400 hover:text-amber-400 p-1 rounded transition" data-id="${r.id}" title="ویرایش قانون">
+              <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+            </button>
+            <!-- دکمه حذف (سطل زباله) -->
+            <button class="btn-delete-rule text-slate-500 hover:text-rose-400 p-1 rounded transition" data-id="${r.id}" title="حذف قانون">
+              <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.rule-toggle-active').forEach(chk => {
+        chk.addEventListener('change', (e) => {
+          const rule = appState.rules.find(r => r.id === e.target.getAttribute('data-id'));
+          if (rule) {
+            rule.active = e.target.checked;
+            autoSaveState();
+            renderAllViews();
+          }
+        });
+      });
+
+      // اتصال ایونت مداد (ویرایش)
+      container.querySelectorAll('.btn-edit-rule').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          const rule = appState.rules.find(r => r.id === id);
+          if (rule) {
+            document.getElementById('edit-rule-id').value = rule.id;
+            document.getElementById('edit-rule-text').value = rule.text;
+            document.getElementById('edit-rule-cat').value = rule.category || 'استراتژی تکنیکال';
+            document.getElementById('modal-edit-rule').classList.remove('hidden');
+          }
+        });
+      });
+
+      container.querySelectorAll('.btn-delete-rule').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          appState.rules = appState.rules.filter(r => r.id !== e.currentTarget.getAttribute('data-id'));
+          autoSaveState();
+          renderAllViews();
+          showToast('قانون حذف شد', 'info');
+        });
+      });
+
+      renderBrokenRulesAnalysis();
+    }
+
+    function renderBrokenRulesAnalysis() {
+      const container = document.getElementById('broken-rules-container');
+      if (!container) return;
+      const ruleBreakCounts = {};
+      appState.rules.forEach(r => ruleBreakCounts[r.id] = 0);
+      let totalBreaks = 0;
+
+      appState.trades.forEach(t => {
+        const checked = t.checkedRules || [];
+        appState.rules.forEach(r => {
+          if (r.active && !checked.includes(r.id)) {
+            ruleBreakCounts[r.id] = (ruleBreakCounts[r.id] || 0) + 1;
+            totalBreaks++;
+          }
+        });
+      });
+
+      container.innerHTML = appState.rules.map(r => {
+        const count = ruleBreakCounts[r.id] || 0;
+        const pct = totalBreaks > 0 ? Math.round((count / totalBreaks) * 100) : 0;
+        return `
+          <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="text-slate-300 text-[11px]">${r.text}</span>
+              <span class="font-mono text-rose-400 font-bold text-[10px]">${count} بار (${pct}%)</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+              <div class="bg-rose-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openTradeModal() {
+      triggerHaptic('medium');
+      const modal = document.getElementById('modal-trade');
+      const form = document.getElementById('form-trade');
+      const checkContainer = document.getElementById('modal-trade-checklist-items');
+      const liveScore = document.getElementById('modal-discipline-live-score');
+      if (!modal || !form || !checkContainer) return;
+
+      form.reset();
+      document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
+
+      checkContainer.innerHTML = appState.rules.filter(r => r.active).map(r => `
+        <label class="flex items-center gap-2 p-1.5 rounded-lg bg-slate-800/60 cursor-pointer border border-slate-700/60">
+          <input type="checkbox" name="trade_rule_item" value="${r.id}" checked class="modal-trade-chk w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700">
+          <span class="text-xs text-slate-200">${r.text}</span>
+        </label>
+      `).join('');
+
+      function updateLiveScore() {
+        const all = checkContainer.querySelectorAll('.modal-trade-chk');
+        const checked = checkContainer.querySelectorAll('.modal-trade-chk:checked');
+        const score = all.length > 0 ? Math.round((checked.length / all.length) * 100) : 100;
+        if (liveScore) liveScore.textContent = score + '%';
+      }
+
+      checkContainer.querySelectorAll('.modal-trade-chk').forEach(c => {
+        c.addEventListener('change', () => {
+          triggerHaptic('light');
+          updateLiveScore();
+        });
+      });
+
+      updateLiveScore();
+      modal.classList.remove('hidden');
+    }
+
+    function closeTradeModal() {
+      document.getElementById('modal-trade')?.classList.add('hidden');
+    }
+
+    function renderAllViews() {
+      updateDashboard();
+      renderTradesList();
+      renderCalendar();
+      renderChecklistView();
+      renderCharts();
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `${type === 'success' ? 'bg-emerald-600' : 'bg-rose-600'} text-white text-xs font-bold px-3 py-2.5 rounded-xl shadow-xl flex items-center justify-between transition-all duration-300`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    function switchView(targetViewId) {
+      triggerHaptic('light');
+      ['view-dashboard', 'view-trades', 'view-calendar', 'view-discipline', 'view-analytics'].forEach(vId => {
+        const el = document.getElementById(vId);
+        if (el) el.classList.toggle('hidden', vId !== targetViewId);
+      });
+
+      [
+        { id: 'nav-btn-dashboard', target: 'view-dashboard' },
+        { id: 'nav-btn-trades', target: 'view-trades' },
+        { id: 'nav-btn-calendar', target: 'view-calendar' },
+        { id: 'nav-btn-discipline', target: 'view-discipline' },
+        { id: 'nav-btn-analytics', target: 'view-analytics' }
+      ].forEach(item => {
+        const btn = document.getElementById(item.id);
+        if (btn) btn.className = `flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition tap-effect ${item.target === targetViewId ? 'text-emerald-400 font-bold' : 'text-slate-400 hover:text-white'}`;
+      });
+
+      appState.activeView = targetViewId;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderCharts();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const user = tg && tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
+        const greetingEl = document.getElementById('tg-user-greeting');
+        if (greetingEl) {
+          if (user && user.first_name) {
+            greetingEl.textContent = `${user.first_name} (ID: ${user.id})`;
+          } else {
+            greetingEl.textContent = 'کاربر مستقل';
+          }
+        }
+      } catch (e) {}
+
+      loadState();
+      renderAllViews();
+
+      // رویدادهای ناوبری
+      document.getElementById('nav-btn-dashboard')?.addEventListener('click', () => switchView('view-dashboard'));
+      document.getElementById('nav-btn-trades')?.addEventListener('click', () => switchView('view-trades'));
+      document.getElementById('nav-btn-calendar')?.addEventListener('click', () => switchView('view-calendar'));
+      document.getElementById('nav-btn-discipline')?.addEventListener('click', () => switchView('view-discipline'));
+      document.getElementById('nav-btn-analytics')?.addEventListener('click', () => switchView('view-analytics'));
+      document.getElementById('btn-goto-trades')?.addEventListener('click', () => switchView('view-trades'));
+
+      // سوئیچ چارت خطی / کندل‌استیک
+      document.getElementById('btn-chart-line')?.addEventListener('click', () => {
+        appState.chartMode = 'line';
+        document.getElementById('btn-chart-line').className = 'px-2.5 py-1 rounded bg-emerald-500 text-slate-950 font-bold transition tap-effect flex items-center gap-1';
+        document.getElementById('btn-chart-candle').className = 'px-2.5 py-1 rounded text-slate-400 hover:text-white font-medium transition tap-effect flex items-center gap-1';
+        document.getElementById('chart-type-desc').textContent = 'نمایش خطی روند بالانس حساب';
+        renderCharts();
+      });
+
+      document.getElementById('btn-chart-candle')?.addEventListener('click', () => {
+        appState.chartMode = 'candlestick';
+        document.getElementById('btn-chart-candle').className = 'px-2.5 py-1 rounded bg-emerald-500 text-slate-950 font-bold transition tap-effect flex items-center gap-1';
+        document.getElementById('btn-chart-line').className = 'px-2.5 py-1 rounded text-slate-400 hover:text-white font-medium transition tap-effect flex items-center gap-1';
+        document.getElementById('chart-type-desc').textContent = 'نمایش کندل‌های روزانه نوسان سرمایه (OHLC)';
+        renderCharts();
+      });
+
+      // مدال بالانس
+      const balModal = document.getElementById('modal-initial-balance');
+      document.getElementById('btn-edit-balance')?.addEventListener('click', () => {
+        document.getElementById('input-starting-balance').value = appState.initialBalance;
+        balModal?.classList.remove('hidden');
+      });
+      document.getElementById('btn-close-balance-modal')?.addEventListener('click', () => balModal?.classList.add('hidden'));
+
+      document.getElementById('form-initial-balance')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = Number(document.getElementById('input-starting-balance').value);
+        if (!isNaN(val) && val >= 0) {
+          appState.initialBalance = val;
+          autoSaveState();
+          balModal?.classList.add('hidden');
+          renderAllViews();
+          showToast(`بالانس اولیه با موفقیت روی $${val.toLocaleString()} تنظیم شد`, 'success');
+        }
+      });
+
+      // مدال ویرایش قانون چک‌لیست
+      const editRuleModal = document.getElementById('modal-edit-rule');
+      document.getElementById('btn-close-edit-rule-modal')?.addEventListener('click', () => editRuleModal?.classList.add('hidden'));
+      document.getElementById('form-edit-rule')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-rule-id').value;
+        const text = document.getElementById('edit-rule-text').value.trim();
+        const category = document.getElementById('edit-rule-cat').value;
+        const rule = appState.rules.find(r => r.id === id);
+        if (rule && text) {
+          rule.text = text;
+          rule.category = category;
+          autoSaveState();
+          editRuleModal?.classList.add('hidden');
+          renderChecklistView();
+          showToast('قانون با موفقیت ویرایش شد', 'success');
+        }
+      });
+
+      // مدال ثبت سریع عملکرد از تقویم
+      const calModal = document.getElementById('modal-calendar-pnl');
+      document.getElementById('btn-close-cal-modal')?.addEventListener('click', () => calModal?.classList.add('hidden'));
+      document.getElementById('form-calendar-quick-entry')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const targetDate = document.getElementById('cal-modal-target-date').value;
+        const symbol = document.getElementById('cal-modal-symbol').value.trim().toUpperCase() || 'DAILY';
+        const type = document.getElementById('cal-modal-type').value;
+        let amount = Math.abs(Number(document.getElementById('cal-modal-amount').value) || 0);
+
+        // اگر نتیجه زیان باشد، خودکار منفی اعمال می‌شود
+        let finalPnl = type === 'LOSS' ? -amount : amount;
+
+        const newTrade = {
+          id: 't_cal_' + Date.now(),
+          symbol,
+          direction: finalPnl >= 0 ? 'LONG' : 'SHORT',
+          date: targetDate,
+          result: finalPnl >= 0 ? 'WIN' : 'LOSS',
+          pnl: finalPnl,
+          rr: 1.5,
+          setup: 'ثبت سریع تقویم',
+          emotion: 'Calm',
+          checkedRules: appState.rules.filter(r => r.active).map(r => r.id),
+          notes: 'ورود مستقیم از تقویم معاملاتی'
+        };
+
+        appState.trades.push(newTrade);
+        autoSaveState();
+        calModal?.classList.add('hidden');
+        renderAllViews();
+        showToast(`رکورد ${targetDate} با موفقیت ثبت شد`, 'success');
+      });
+
+      // باز و بسته شدن مدال ترید
+      document.getElementById('btn-open-add-trade-top')?.addEventListener('click', openTradeModal);
+      document.getElementById('btn-open-add-trade-tab')?.addEventListener('click', openTradeModal);
+      document.getElementById('nav-btn-add')?.addEventListener('click', openTradeModal);
+      document.getElementById('btn-close-trade-modal')?.addEventListener('click', closeTradeModal);
+
+      // مدال افزودن قانون
+      const ruleModal = document.getElementById('modal-add-rule');
+      document.getElementById('btn-open-add-rule')?.addEventListener('click', () => ruleModal?.classList.remove('hidden'));
+      document.getElementById('btn-close-rule-modal')?.addEventListener('click', () => ruleModal?.classList.add('hidden'));
+
+      document.getElementById('form-rule')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = document.getElementById('rule-title-input').value.trim();
+        const category = document.getElementById('rule-category-select').value;
+        if (!text) return;
+
+        appState.rules.push({ id: 'r_' + Date.now(), text, category, active: true });
+        autoSaveState();
+        document.getElementById('rule-title-input').value = '';
+        ruleModal?.classList.add('hidden');
+        renderChecklistView();
+        triggerHaptic('success');
+        showToast('قانون جدید به چک‌لیست اضافه شد', 'success');
+      });
+
+      // فرم ثبت معامله با منطق کسر خودکار ضرر
+      document.getElementById('form-trade')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const symbol = document.getElementById('trade-symbol').value.trim().toUpperCase();
+        const direction = document.getElementById('trade-direction').value;
+        const date = document.getElementById('trade-date').value;
+        const result = document.getElementById('trade-result').value;
+        let pnlInput = Number(document.getElementById('trade-pnl').value) || 0;
+
+        // کسر خودکار در صورت انتخاب لیبل زیان (Loss)
+        let finalPnl = pnlInput;
+        if (result === 'LOSS') {
+          finalPnl = -Math.abs(pnlInput); // تضمین منفی شدن قطعی عدد
+        } else if (result === 'WIN') {
+          finalPnl = Math.abs(pnlInput); // تضمین مثبت بودن برای سود
+        } else {
+          finalPnl = 0; // سر به سر
+        }
+
+        const rr = Number(document.getElementById('trade-rr').value) || 1.5;
+        const setup = document.getElementById('trade-setup').value.trim();
+        const emotion = document.getElementById('trade-emotion').value;
+        const notes = document.getElementById('trade-notes').value.trim();
+
+        const checkedRules = [];
+        document.querySelectorAll('input[name="trade_rule_item"]:checked').forEach(c => checkedRules.push(c.value));
+
+        const newTrade = { id: 't_' + Date.now(), symbol, direction, date, result, pnl: finalPnl, rr, setup, emotion, checkedRules, notes };
+        appState.trades.push(newTrade);
+        autoSaveState();
+        closeTradeModal();
+        renderAllViews();
+
+        const discScore = computeDisciplineScore(newTrade);
+        if (discScore === 100) {
+          triggerHaptic('success');
+          if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+          showToast(`معامله با دیسیپلین ۱۰۰٪ ثبت شد!`, 'success');
+        } else {
+          triggerHaptic('light');
+          showToast(`معامله با نمره دیسیپلین ${discScore}% ذخیره شد`, 'info');
+        }
+      });
+
+      document.getElementById('btn-sync-cloud-refresh')?.addEventListener('click', () => {
+        triggerHaptic('light');
+        loadState();
+        showToast('اطلاعات پرونده شما با کلود تلگرام همگام شد ✓', 'success');
+      });
+
+      document.getElementById('btn-close-sync-banner')?.addEventListener('click', () => {
+        document.getElementById('tma-sync-banner')?.remove();
+      });
+
+      document.getElementById('filter-symbol')?.addEventListener('change', renderTradesList);
+      document.getElementById('filter-result')?.addEventListener('change', renderTradesList);
+      document.getElementById('filter-discipline')?.addEventListener('change', renderTradesList);
+
+      document.getElementById('btn-clear-all-data')?.addEventListener('click', () => {
+        appState.trades = [];
+        autoSaveState();
+        renderAllViews();
+        showToast('پرونده معاملاتی شما ریست شد', 'info');
+      });
+    });
+  </script>
+</body>
+</html>
